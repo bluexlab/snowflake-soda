@@ -1,6 +1,11 @@
-# snowflake-soda: Table Schema migration tool for Snowflake
+# snowflake-soda
+A table schema migration tool for Snowflake
 
 ## Installation
+
+````
+go install github.com/bluexlab/snowflake-soda@v0.1.0
+````
 
 ## Configuration
 All the credentials need to be set in environment variables.
