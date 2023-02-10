@@ -51,7 +51,7 @@ func migration(down bool, step int) {
 	logrus.Info("Build connection to Snowflake.")
 	db, err := sql.Open("snowflake", connString)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Error(err.Error())
 		os.Exit(-1)
 	}
 	defer db.Close()
@@ -60,13 +60,13 @@ func migration(down bool, step int) {
 	if down {
 		logrus.Info("Migrate down.")
 		if err := migrator.MigrateDown(step); err != nil {
-			fmt.Println(err.Error())
+			logrus.Error(err.Error())
 			os.Exit(-1)
 		}
 	} else {
 		logrus.Info("Migrate Up.")
 		if err := migrator.MigrateUp(step); err != nil {
-			fmt.Println(err.Error())
+			logrus.Error(err.Error())
 			os.Exit(-1)
 		}
 	}
