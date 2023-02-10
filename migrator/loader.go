@@ -2,6 +2,7 @@ package migrator
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"regexp"
@@ -9,7 +10,9 @@ import (
 	"strconv"
 )
 
-var mrx = regexp.MustCompile(`^(\d+)_([\-_a-z0-9]+)?\.(up|down)\.(sql)$`)
+const MigrationSQLFilePattern = `^(\d{14})_([\-_a-z0-9]+)?\.(up|down)\.(sql)$`
+
+var mrx = regexp.MustCompile(MigrationSQLFilePattern)
 
 func LoadMigrations(folder string) ([]SQLMigration, []SQLMigration, error) {
 	migrationDir := os.DirFS(folder)
@@ -28,10 +31,10 @@ func LoadMigrations(folder string) ([]SQLMigration, []SQLMigration, error) {
 		fileName := d.Name()
 		matches := mrx.FindAllStringSubmatch(fileName, -1)
 		if len(matches) == 0 {
-			continue
+			return nil, nil, fmt.Errorf(`%q is not a valid migration SQL file name`, fileName)
 		}
 		if len(matches[0]) != 5 {
-			continue
+			return nil, nil, fmt.Errorf(`%q is not a valid migration SQL file name`, fileName)
 		}
 
 		version, err := strconv.ParseInt(matches[0][1], 10, 64)
